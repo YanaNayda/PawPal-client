@@ -2,8 +2,14 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import WelcomeScreen from './screen/WelcomeScreen';
-import SignUpScreen from './screen/SignUpScreen';
+import WelcomeScreen from './screen/startScreen/WelcomeScreen';
+import SignUpScreen from './screen/startScreen/SignUpScreen';
+import LogInScreen from './screen/startScreen/LogInScreen';
+import HomeScreen from './screen/HomeScreen';
+import MarketplaceScreen from './screen/MarketplaceScreen';
+import ProfileScreen from './screen/ProfileScreen';
+
+ 
 
 export default function App() {
 
@@ -13,8 +19,10 @@ export default function App() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
-         
-      
+        <Stack.Screen name="LogInScreen" component={LogInScreen} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="MarketplaceScreen" component={MarketplaceScreen} />
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>
