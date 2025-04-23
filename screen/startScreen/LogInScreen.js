@@ -68,29 +68,29 @@ const LogInScreen = ({navigation}) => {
          </Text>
         </Text>
         
-         
         <View style={styles.buttonContainer}>
            <Button
              title="Sign Up"
              color="#FF6347"
               onPress={() => {
-                if ( Email === "" || Password === "" ) {
+                if (Email === "" || Password === "") {
                   alert("Please fill in all fields!");
                   return;
                 }
+          
                 const auth = getAuth();
                 signInWithEmailAndPassword(auth, Email, Password)
-                .then((userCredential) => {
-                // Signed in 
-                const user = userCredential.user;
-                // ...
-                alert("Login Successful!");})
-                .catch((error) => {
-                 const errorCode = error.code;
-                  const errorMessage = error.message;
-                });
-                navigation.navigate("HomeScreen");
-
+                  .then((userCredential) => {
+                     
+                    const user = userCredential.user;
+                    alert("Login Successful!");
+                    navigation.navigate("HomeScreen");  
+                  })
+                  .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    alert("Login failed: " + errorMessage); // Show error to the user
+                  });
             }
           }     
           />
