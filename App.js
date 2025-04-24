@@ -8,6 +8,7 @@ import LogInScreen from './screen/startScreen/LogInScreen';
 import HomeScreen from './screen/HomeScreen';
 import MarketplaceScreen from './screen/MarketplaceScreen';
 import ProfileScreen from './screen/ProfileScreen';
+import TabNavigation from './components/TabNavigation';
 
  
 
@@ -20,9 +21,7 @@ export default function App() {
         <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} />
         <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
         <Stack.Screen name="LogInScreen" component={LogInScreen} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="MarketplaceScreen" component={MarketplaceScreen} />
-        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
+        <Stack.Screen name="MainTabs"component ={TabNavigation}/>
       </Stack.Navigator>
       <StatusBar style="auto" />
     </NavigationContainer>

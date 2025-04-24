@@ -19,7 +19,7 @@ const WelcomeScreen = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <Button
           title="Get Started"
-          onPress={() => navigation.navigate("LogInScreen")}
+          onPress={() => navigation.replace("LogInScreen")} 
           color="#FF6347" // Set color directly on Button instead of wrapping in a container
         />
       </View>

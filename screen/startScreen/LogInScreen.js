@@ -1,12 +1,13 @@
 import { StyleSheet } from "react-native";
 import React, { useState } from "react"; 
 import { View, Text, Button } from "react-native";
-import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { TextInput } from 'react-native';
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
  
 
 
@@ -34,11 +35,11 @@ const LogInScreen = ({navigation}) => {
      
 
     return (
-        <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
         <Text style={styles.title}>Log In</Text>
-         
-
-         <TextInput
+  
+        <TextInput
           style={styles.input}
           placeholder="Enter Your Email..."
           value={Email}
@@ -50,52 +51,50 @@ const LogInScreen = ({navigation}) => {
           placeholder="Enter Password..."
           value={Password}
           onChangeText={setTextPassword}
-
         />
+  
         <Text style={{ 
           alignSelf: 'flex-end', 
           textDecorationLine: 'underline', 
           color: '#ffffff', 
-     }}>
-         Forgot Password?
-       </Text>
-
-
-        <Text style={styles.subtitle}>
-        Don't have an account?{" "}
-        <Text style={{ color: "#FF6347" }} onPress={() => navigation.navigate("SignUpScreen")}>
-          Sign Up
-         </Text>
+        }}>
+          Forgot Password?
         </Text>
-        
+  
+        <Text style={styles.subtitle}>
+          Don't have an account?{" "}
+          <Text style={{ color: "#FF6347" }} onPress={() => navigation.navigate("SignUpScreen")}>
+            Sign Up
+          </Text>
+        </Text>
+  
         <View style={styles.buttonContainer}>
-           <Button
-             title="Sign Up"
-             color="#FF6347"
-              onPress={() => {
-                if (Email === "" || Password === "") {
-                  alert("Please fill in all fields!");
-                  return;
-                }
-          
-                const auth = getAuth();
-                signInWithEmailAndPassword(auth, Email, Password)
-                  .then((userCredential) => {
-                     
-                    const user = userCredential.user;
-                    alert("Login Successful!");
-                    navigation.navigate("HomeScreen");  
-                  })
-                  .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                    alert("Login failed: " + errorMessage); // Show error to the user
-                  });
-            }
-          }     
+          <Button
+            title="Sign Up"
+            color="#FF6347"
+            onPress={() => {
+              if (Email === "" || Password === "") {
+                alert("Please fill in all fields!");
+                return;
+              }
+  
+              const auth = getAuth();
+              signInWithEmailAndPassword(auth, Email, Password)
+                .then((userCredential) => {
+                  const user = userCredential.user;
+                  alert("Login Successful!");
+                  navigation.replace("MainTabs");
+                })
+                .catch((error) => {
+                  const errorCode = error.code;
+                  const errorMessage = error.message;
+                  alert("Login failed: " + errorMessage);
+                });
+            }}
           />
         </View>
       </View>
+    </TouchableWithoutFeedback>
       );
     };
 
@@ -131,6 +130,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: "60%",
   },
+  button: {
+    textAlign: "center",
+    fontSize: 18,
+    color: "#ffffff",
+    fontWeight: "bold",
+    padding: 10,
+    borderRadius: 5
+  },
+
     image: {
         width: 100,
         height: 100,
@@ -139,12 +147,17 @@ const styles = StyleSheet.create({
     input: {
       width: '100%',               
       borderColor: '#FF6347',
-      borderWidth: 1,
+      borderWidth: 2,
       borderRadius: 8,
       paddingHorizontal: 15,
       fontSize: 16,
       backgroundColor: '#fff',
-      marginVertical: 10,         
+      marginVertical: 10, 
+      paddingVertical: 10,
+      paddingTop: 15,
+      paddingBottom: 15,
+      fontSize: 16,
+      color: '#000',
     },
 
 });
