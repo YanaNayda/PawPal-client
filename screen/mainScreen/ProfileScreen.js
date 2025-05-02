@@ -7,7 +7,7 @@ import { StyleSheet, Text, View } from 'react-native';
 //import TabNavigation from '../components/TabNavigation';
 
 
-//const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 const ProfileScreen = ({ navigation }) => {
     return (

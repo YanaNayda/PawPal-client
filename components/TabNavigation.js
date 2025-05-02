@@ -2,9 +2,9 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import HomeScreen from '../screen/HomeScreen';
-import MarketplaceScreen from '../screen/MarketplaceScreen';
-import ProfileScreen from '../screen/ProfileScreen';
+import HomeScreen from '../screen/mainScreen/HomeScreen';
+import MarketplaceScreen from '../screen/mainScreen/MarketplaceScreen';
+import ProfileScreen from '../screen/mainScreen/ProfileScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -17,6 +17,7 @@ function TabNavigation() {
     tabBarInactiveTintColor: 'gray',
     tabBarStyle: { position: 'absolute', backgroundColor: '#fff' },
     tabBarIcon: ({ color, size }) => {
+      // Define the icon name based on the route name
       let iconName;
 
       if (route.name === 'Home') {

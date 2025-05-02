@@ -11,9 +11,6 @@ import { Image } from "react-native";
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 
  
-
-
-
 const SignUpScreen = ({navigation}) => {
 
     const firebaseConfig = {
@@ -136,11 +133,12 @@ const SignUpScreen = ({navigation}) => {
                 const user = userCredential.user;
                 console.log("User registered:", user);
                 alert("User registered successfully!");
-            })
+                navigation.navigate("LogInScreen");
+                }) 
                .catch((error) => {
                 console.error("Registration error:", error.message);
                 alert("Registration error: " + error.message);});
-                navigation.replace("MainTabs");
+                
             }
           }     
           />

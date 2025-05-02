@@ -8,7 +8,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
- 
+
 
 
 const LogInScreen = ({navigation}) => {
@@ -83,7 +83,8 @@ const LogInScreen = ({navigation}) => {
                 .then((userCredential) => {
                   const user = userCredential.user;
                   alert("Login Successful!");
-                  navigation.replace("MainTabs");
+                  
+                  navigation.navigate('TabNavigation'); 
                 })
                 .catch((error) => {
                   const errorCode = error.code;
