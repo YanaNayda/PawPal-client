@@ -11,7 +11,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 
 
-const LogInScreen = ({navigation}) => {
+export default function LogInScreen({ navigation })  {
 
     const firebaseConfig = {
     apiKey: "AIzaSyAj75ig-SRJ9hVDBug3mp_KG2YulyYmPm4",
@@ -63,7 +63,7 @@ const LogInScreen = ({navigation}) => {
   
         <Text style={styles.subtitle}>
           Don't have an account?{" "}
-          <Text style={{ color: "#FF6347" }} onPress={() => navigation.navigate("SignUpScreen")}>
+          <Text style={{ color: "#FF6347" }} onPress={() => navigation.navigate("SignUp")}>
             Sign Up
           </Text>
         </Text>
@@ -83,8 +83,16 @@ const LogInScreen = ({navigation}) => {
                 .then((userCredential) => {
                   const user = userCredential.user;
                   alert("Login Successful!");
-                  
-                  navigation.navigate('TabNavigation'); 
+
+                  // Navigate to the main screen after successful login
+                  navigation.navigate('Main', {
+                    screen: 'MainTabs',
+                    params: {
+                      screen: 'Home',
+                      params: { username: user.email }
+                    }
+                  });
+                   
                 })
                 .catch((error) => {
                   const errorCode = error.code;
@@ -99,7 +107,7 @@ const LogInScreen = ({navigation}) => {
       );
     };
 
-    export default LogInScreen;
+    
 
 
 const styles = StyleSheet.create({

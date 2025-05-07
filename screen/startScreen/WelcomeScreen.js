@@ -3,7 +3,7 @@ import React from "react";
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
  
-import LogInScreen from "./loginScreen/LogInScreen";
+import LogInScreen from "./LogInScreen";
 import { View, Text, Button } from 'react-native';
 
 
@@ -19,7 +19,7 @@ const WelcomeScreen = ({ navigation }) => {
       <View style={styles.buttonContainer}>
         <Button
           title="Get Started"
-          onPress={() => navigation.replace("LogInScreen")} 
+          onPress={() => navigation.navigate("LogIn")} 
           color="#FF6347" // Set color directly on Button instead of wrapping in a container
         />
       </View>

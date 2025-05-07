@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function HomeScreen({route, navigation}) {
+export default function GroupScreen({route, navigation}) {
 
   const username = route?.params?.username || "Paw's User";
 
   return (
     <View style={styles.container}>
       <Text style={styles.subtitle}>Welcome, {username}! </Text>
-      <Text style={styles.title}>Home Screen</Text>
+      <Text style={styles.title}>GroupScreen</Text>
 
     </View>
   );

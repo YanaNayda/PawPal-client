@@ -1,13 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-export default function HomeScreen({route, navigation}) {
+export default function SettingsScreen({navigation}) {
 
-  const username = route?.params?.username || "Paw's User";
+
 
   return (
     <View style={styles.container}>
-      <Text style={styles.subtitle}>Welcome, {username}! </Text>
+      <Text style={styles.subtitle}>Welcome </Text>
       <Text style={styles.title}>Home Screen</Text>
 
     </View>

@@ -79,7 +79,7 @@ const SignUpScreen = ({navigation}) => {
 
         <Text style={styles.subtitle}>
         Already have an account?{" "} 
-        <Text style={{ color: "#FF6347" }} onPress={() => navigation.navigate("LogInScreen")}>
+        <Text style={{ color: "#FF6347" }} onPress={() => navigation.navigate("LogIn")}>
           Log In
          </Text>
         </Text>
@@ -133,7 +133,7 @@ const SignUpScreen = ({navigation}) => {
                 const user = userCredential.user;
                 console.log("User registered:", user);
                 alert("User registered successfully!");
-                navigation.navigate("LogInScreen");
+                navigation.navigate("LogIn"); // Navigate to LogInScreen after successful registration
                 }) 
                .catch((error) => {
                 console.error("Registration error:", error.message);
