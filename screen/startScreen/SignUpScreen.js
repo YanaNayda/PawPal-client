@@ -9,6 +9,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { Image } from "react-native";
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { sendEmailVerification } from "firebase/auth";
 
  
 const SignUpScreen = ({navigation}) => {
@@ -32,6 +33,7 @@ const SignUpScreen = ({navigation}) => {
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
+   const auth = getAuth(app);
 
 
     const [Name, setTextName] = useState('');
@@ -128,17 +130,25 @@ const SignUpScreen = ({navigation}) => {
 
                   return;
                 }
-               createUserWithEmailAndPassword(getAuth(), Email, Password)
-               .then((userCredential) => {
-                const user = userCredential.user;
-                console.log("User registered:", user);
-                alert("User registered successfully!");
-                navigation.navigate("LogIn"); // Navigate to LogInScreen after successful registration
-                }) 
-               .catch((error) => {
-                console.error("Registration error:", error.message);
-                alert("Registration error: " + error.message);});
+                createUserWithEmailAndPassword(auth, Email, Password)
+                .then((userCredential) => {
+                  const user = userCredential.user;
+              
                 
+                  sendEmailVerification(user)
+                    .then(() => {
+                      alert("We send a verification email to your email address. Please check your inbox.");  
+                      navigation.navigate("LogIn"); 
+                    })
+                    .catch((error) => {
+                      console.error("Error ", error.message);
+                      alert("Error " + error.message);
+                    });
+                })
+                .catch((error) => {
+                  console.error("Registration error:", error.message);
+                  alert("Registration error: " + error.message);
+                });
             }
           }     
           />

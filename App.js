@@ -11,6 +11,7 @@ import LogInScreen from './screen/startScreen/LogInScreen';
 import HomeScreen from './screen/mainScreen/HomeScreen';
 import MarketplaceScreen from './screen/mainScreen/MarketplaceScreen';
 import ProfileScreen from './screen/mainScreen/ProfileScreen';
+import ForgotPasswordScreen from './screen/startScreen/ForgotPasswordScreen';
 
 import HelpSupportScreen from './screen/additionalScreen/HelpSupportScreen';
 import SettingsScreen from './screen/additionalScreen/SettingsScreen';
@@ -62,8 +63,7 @@ const Drawer = createDrawerNavigator();
          options={{ headerShown: false, title: 'Help&Support' }}/>
         <Drawer.Screen name="Settings" component={SettingsScreen} 
          options={{ headerShown: false, title: 'Settings' }}/>
-        <Drawer.Screen name="Saved" component={SavedScreen} 
-         options={{ headerShown: false, title: 'Saved12' }}/>
+       
       </Drawer.Navigator>
     );
   }
@@ -76,7 +76,9 @@ export default function App() {
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
           <Stack.Screen name="LogIn" component={LogInScreen} />
+          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
           <Stack.Screen name="Main" component={DrawerNavigation} />
+    
         </Stack.Navigator>
       </NavigationContainer>
     );

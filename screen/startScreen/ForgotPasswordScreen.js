@@ -1,17 +1,12 @@
 import { StyleSheet } from "react-native";
 import React, { useState } from "react"; 
-import { View, Text, Button } from "react-native";
+import { View, Text, Button ,TextInput } from "react-native";
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { TextInput } from 'react-native';
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
 
 
-
-export default function LogInScreen({ navigation })  {
+export default function ForgotPasswordScreen({ navigation })  {
 
     const firebaseConfig = {
     apiKey: "AIzaSyAj75ig-SRJ9hVDBug3mp_KG2YulyYmPm4",
@@ -22,91 +17,73 @@ export default function LogInScreen({ navigation })  {
     appId: "1:258494045146:web:33a169d104a831ae2f7ee3",
     measurementId: "G-WLSC5L76D9"
     };
+   
 
  
  
     // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+    const auth = getAuth();
 
-    const [Email, setTextEmail] = useState('');
-    const [Password, setTextPassword] = useState('');
-   
-     
-
+    const [email, setTextEmail] = useState('');
+  
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
-        <Text style={styles.title}>Login</Text>
+        <Text style={styles.title}> Forgot your Password ?</Text>
+    
   
         <TextInput
           style={styles.input}
           placeholder="Enter Your Email..."
-          value={Email}
+          value={email}
+          iconName='ios-mail'
+          iconColor='#2C384A'
           onChangeText={setTextEmail}
         />
-
-        <TextInput
-          secureTextEntry={true}
-          style={styles.input}
-          placeholder="Enter Password..."
-          value={Password}
-          onChangeText={setTextPassword}
-        />
+       
   
         <Text style={{ 
           alignSelf: 'flex-end', 
           textDecorationLine: 'underline', 
           color: '#ffffff', 
         }} 
-        onPress={() => navigation.navigate("ForgotPassword")}>
-          Forgot Password?
+        onPress={() =>  navigation.navigate("LogIn")}>
+          I remembered my password
         </Text>
   
-        <Text style={styles.subtitle}>
-          Don't have an account?{" "}
-          <Text style={{ color: "#FF6347" }} onPress={() => navigation.navigate("SignUp")}>
-            Sign Up
-          </Text>
-        </Text>
-  
+    
         <View style={styles.buttonContainer}>
         <Button
-        title="Log In"
-        color="#FF6347"
+         title="Send Password Reset Email"
+         color="#FF6347"
+         marginTop={25}S
+         style={styles.button}
          onPress={() => {
-              if (Email === "" || Password === "") {
+
+            if (email === "") {
               alert("Please fill in all fields!");
               return;
-          }
+            }
+          
+            if (!isValidEmail(email)) {
+              alert("Please enter a valid email address!");
+              return;
+            }
 
-          const auth = getAuth();
-          signInWithEmailAndPassword(auth, Email, Password)
-          .then((userCredential) => {
-            const user = userCredential.user;
-
-            if (user.emailVerified) {
-            alert("Login Successful!");
-
-            navigation.navigate('Main', {
-              screen: 'MainTabs',
-              params: {
-                screen: 'Home',
-                params: { username: user.email }
-              }
-            });
-            } else {
-            alert("Please verify your email before logging in. Check your inbox.");
-            
-          }
-        })
+            sendPasswordResetEmail(auth, email)
+              .then(() => {
+                alert("Password reset email sent!");
+                navigation.navigate("LogIn");
+              })
             .catch((error) => {
-              const errorCode = error.code;
-              const errorMessage = error.message;
-              alert("Login failed: " + errorMessage);
+             const errorCode = error.code;
+             const errorMessage = error.message;
+             alert("Error: " + error.message);
+    
           });
-        }}
-        />
+          
+    }}
+  />
 </View>
       </View>
     </TouchableWithoutFeedback>
@@ -114,6 +91,10 @@ export default function LogInScreen({ navigation })  {
     };
 
     
+function isValidEmail(email) {
+  const re = /\S+@\S+\.\S+/;
+  return re.test(email);
+}
 
 
 const styles = StyleSheet.create({
