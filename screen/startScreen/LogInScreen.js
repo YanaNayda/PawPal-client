@@ -3,47 +3,29 @@ import React, { useState } from "react";
 import { View, Text, Button } from "react-native";
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { TextInput } from 'react-native';
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-
-
-
-export default function LogInScreen({ navigation })  {
-
-    const firebaseConfig = {
-    apiKey: "AIzaSyAj75ig-SRJ9hVDBug3mp_KG2YulyYmPm4",
-    authDomain: "pawpal-72f36.firebaseapp.com",
-    projectId: "pawpal-72f36",
-    storageBucket: "pawpal-72f36.firebasestorage.app",
-    messagingSenderId: "258494045146",
-    appId: "1:258494045146:web:33a169d104a831ae2f7ee3",
-    measurementId: "G-WLSC5L76D9"
-    };
-
+import { Alert } from "react-native";
+import { auth } from '../../firebase/firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
  
- 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
 
-    const [Email, setTextEmail] = useState('');
-    const [Password, setTextPassword] = useState('');
-   
-     
+export default function LogInScreen({ navigation }) {
+  const [Email, setTextEmail] = useState('');
+  const [Password, setTextPassword] = useState('');
 
-    return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>               
         <Text style={styles.title}>Login</Text>
-  
+
         <TextInput
           style={styles.input}
           placeholder="Enter Your Email..."
           value={Email}
           onChangeText={setTextEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
 
         <TextInput
@@ -53,65 +35,60 @@ export default function LogInScreen({ navigation })  {
           value={Password}
           onChangeText={setTextPassword}
         />
-  
-        <Text style={{ 
-          alignSelf: 'flex-end', 
-          textDecorationLine: 'underline', 
-          color: '#ffffff', 
-        }} 
-        onPress={() => navigation.navigate("ForgotPassword")}>
+
+        <Text
+          style={{
+            alignSelf: 'flex-end',
+            textDecorationLine: 'underline',
+            color: '#ffffff',
+          }}
+          onPress={() => navigation.navigate('ForgotPassword')}
+        >
           Forgot Password?
         </Text>
-  
+
         <Text style={styles.subtitle}>
-          Don't have an account?{" "}
-          <Text style={{ color: "#FF6347" }} onPress={() => navigation.navigate("SignUp")}>
+          Don't have an account?{' '}
+          <Text style={{ color: '#FF6347' }} onPress={() => navigation.navigate('SignUp')}>
             Sign Up
           </Text>
         </Text>
-  
+
         <View style={styles.buttonContainer}>
-        <Button
-        title="Log In"
-        color="#FF6347"
-         onPress={() => {
-              if (Email === "" || Password === "") {
-              alert("Please fill in all fields!");
-              return;
-          }
-
-          const auth = getAuth();
-          signInWithEmailAndPassword(auth, Email, Password)
-          .then((userCredential) => {
-            const user = userCredential.user;
-
-            if (user.emailVerified) {
-            alert("Login Successful!");
-
-            navigation.navigate('Main', {
-              screen: 'MainTabs',
-              params: {
-                screen: 'Home',
-                params: { username: user.email }
+          <Button
+            title="Log In"
+            color="#FF6347"
+            onPress={async () => {
+              if (Email === '' || Password === '') {
+                Alert.alert('Missing Fields', 'Please fill in all fields!');
+                return;
               }
-            });
-            } else {
-            alert("Please verify your email before logging in. Check your inbox.");
-            
-          }
-        })
-            .catch((error) => {
-              const errorCode = error.code;
-              const errorMessage = error.message;
-              alert("Login failed: " + errorMessage);
-          });
-        }}
-        />
-</View>
+
+              try {
+                const userCredential = await signInWithEmailAndPassword(auth, Email, Password);
+                const user = userCredential.user;
+                if (user.emailVerified) {
+                  Alert.alert('Success', 'Login Successful!');
+                  navigation.navigate('Main', {
+                    screen: 'MainTabs',
+                    params: {
+                      screen: 'Home',
+                      params: { username: user.email },
+                    },
+                  });
+                } else {
+                  Alert.alert('Verify Email', 'Please verify your email before logging in. Check your inbox.');
+                }
+              } catch (error) {
+                Alert.alert('Login failed', error.message);
+              }
+            }}
+          />
+        </View>
       </View>
     </TouchableWithoutFeedback>
-      );
-    };
+  );
+}
 
     
 

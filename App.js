@@ -12,15 +12,14 @@ import HomeScreen from './screen/mainScreen/HomeScreen';
 import MarketplaceScreen from './screen/mainScreen/MarketplaceScreen';
 import ProfileScreen from './screen/mainScreen/ProfileScreen';
 import ForgotPasswordScreen from './screen/startScreen/ForgotPasswordScreen';
-
 import HelpSupportScreen from './screen/additionalScreen/HelpSupportScreen';
 import SettingsScreen from './screen/additionalScreen/SettingsScreen';
 import SavedScreen from './screen/additionalScreen/SavedScreen';
-
 import { TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
- 
 import 'react-native-gesture-handler';
+ 
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -35,19 +34,14 @@ const Drawer = createDrawerNavigator();
         name="Home"
         component={HomeScreen}
         options={{ headerShown: false, title: 'Home' }}/>
-
-    
       <Tab.Screen
         name="Marketplace"
         component={MarketplaceScreen}
         options={{ headerShown: false, title: 'Marketplace' }}/>
-
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{ headerShown: false, title: 'Profile' }}/>
-
-    
     </Tab.Navigator>
   
     );

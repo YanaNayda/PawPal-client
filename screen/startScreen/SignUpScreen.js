@@ -13,7 +13,6 @@ import { sendEmailVerification } from "firebase/auth";
 
  
 const SignUpScreen = ({navigation}) => {
-
     const firebaseConfig = {
     apiKey: "AIzaSyAj75ig-SRJ9hVDBug3mp_KG2YulyYmPm4",
     authDomain: "pawpal-72f36.firebaseapp.com",
@@ -33,9 +32,7 @@ const SignUpScreen = ({navigation}) => {
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
-   const auth = getAuth(app);
-
-
+    const auth = getAuth(app);
     const [Name, setTextName] = useState('');
     const [Email, setTextEmail] = useState('');
     const [Password, setTextPassword] = useState('');
@@ -46,7 +43,6 @@ const SignUpScreen = ({navigation}) => {
       <KeyboardAvoidingView
        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}>  
-
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}> 
         <View style={styles.container}>
         <Text style={styles.title}>Sign Up</Text>
@@ -56,7 +52,6 @@ const SignUpScreen = ({navigation}) => {
           value={Name}
           onChangeText={setTextName}
         />
-
          <TextInput
           style={styles.input}
           placeholder="Enter Your Email..."
@@ -69,8 +64,8 @@ const SignUpScreen = ({navigation}) => {
           placeholder="Enter Password..."
           value={Password}
           onChangeText={setTextPassword}
-
         />
+
         <TextInput
           secureTextEntry={true}
           style={styles.input}
@@ -78,7 +73,7 @@ const SignUpScreen = ({navigation}) => {
           value={ConfirmPassword}
           onChangeText={setTextPasswordConfirm}
         />
-
+        
         <Text style={styles.subtitle}>
         Already have an account?{" "} 
         <Text style={{ color: "#FF6347" }} onPress={() => navigation.navigate("LogIn")}>
