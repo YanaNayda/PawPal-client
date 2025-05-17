@@ -4,8 +4,6 @@ import { useNavigation } from '@react-navigation/native';
 
 export default function HelpSupportScreen({navigation}) {
 
-  
-
   return (
     <View style={styles.container}>
       <Text style={styles.subtitle}>Welcome! </Text>

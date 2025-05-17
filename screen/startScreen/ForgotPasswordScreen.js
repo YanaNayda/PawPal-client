@@ -18,9 +18,6 @@ export default function ForgotPasswordScreen({ navigation })  {
     measurementId: "G-WLSC5L76D9"
     };
    
-
- 
- 
     // Initialize Firebase
     const auth = getAuth();
 

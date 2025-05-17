@@ -10,6 +10,7 @@ export default function HomeScreen({route, navigation}) {
       <Text style={styles.subtitle}>Welcome, {username}! </Text>
       <Text style={styles.title}>Home Screen</Text>
 
+
     </View>
   );
 }

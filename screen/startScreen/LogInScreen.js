@@ -6,13 +6,16 @@ import { TextInput } from 'react-native';
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { Alert } from "react-native";
-import { auth } from '../../firebase/firebaseConfig';
+import { auth } from '../../firebase/FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import axios from 'axios';
+import { useUser } from '../../context/UserContext';
  
 
 export default function LogInScreen({ navigation }) {
   const [Email, setTextEmail] = useState('');
   const [Password, setTextPassword] = useState('');
+  const { setUserData } = useUser();
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -63,20 +66,27 @@ export default function LogInScreen({ navigation }) {
                 Alert.alert('Missing Fields', 'Please fill in all fields!');
                 return;
               }
-
               try {
                 const userCredential = await signInWithEmailAndPassword(auth, Email, Password);
                 const user = userCredential.user;
-                if (user.emailVerified) {
+
+                if (user.emailVerified = true) {
+                   
+                  const response = await axios.get(`http://192.168.68.95:3000/api/users/${user.uid}`);
+                  const userData = response.data;
+
+                  console.log("User from server:", userData);
+                  setUserData(userData);
+
                   Alert.alert('Success', 'Login Successful!');
                   navigation.navigate('Main', {
                     screen: 'MainTabs',
                     params: {
-                      screen: 'Home',
-                      params: { username: user.email },
+                      screen: 'Home'
                     },
-                  });
-                } else {
+                  })
+                }
+                else {
                   Alert.alert('Verify Email', 'Please verify your email before logging in. Check your inbox.');
                 }
               } catch (error) {

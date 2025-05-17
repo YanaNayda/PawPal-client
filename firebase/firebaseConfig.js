@@ -1,7 +1,8 @@
 // firebase.js
  
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth'; // оставить
+import { getAuth,signOut } from 'firebase/auth'; // оставить
+ // оставить
  
 const firebaseConfig = {              
   apiKey: "AIzaSyAj75ig-SRJ9hVDBug3mp_KG2YulyYmPm4",
@@ -14,10 +15,8 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
-// Экспорт нужных сервисов
 const auth = getAuth(app);
-
-export { auth };
+ 
+export { auth, signOut }; // оставить
 
  

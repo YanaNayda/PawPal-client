@@ -1,32 +1,37 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { ImageBackground } from 'react-native';
-import { Image } from 'react-native';
-import { TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity , Button} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { useState } from 'react';
-import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useEffect } from 'react';
+import { useUser } from '../../context/UserContext';
+import EditProfile from './EditProfile';
+import { ScrollView } from 'react-native-gesture-handler'
+import { useNavigation } from '@react-navigation/native';
  
 
 
-const ProfileScreen = (navigate) => {
+const ProfileScreen = ({navigation}) => {
 
-  const auth = getAuth();
-  const user = auth.currentUser;
   
+  const { userData } = useUser(); 
+
   const [avatar, setAvatar] = useState(null);
-  const [email, setEmail] = useState(user ? user.email : "user@example.com");
-  const [username, setUsername] = useState("Paw's User");
+  const [email, setEmail] = useState(" ");
+  const [username, setUsername] = useState(" ");
+  const [bio, setBio] = useState(" ");
+  const [friends, setFriends] = useState(" ");
+  const [posts, setPosts] = useState(" ");
+  const friendCount = userData?.friends?.length || 0;  
+  const postsCount = userData?.posts?.length || 0;
+ 
 
   useEffect(() => {
-    if (user) {
-      setEmail(user.email);
-      //setUsername(user.displayName || "Paw's User");   
+    if (userData) {
+      setUsername(userData.displayName || "No name");
+      setBio(userData.bio || "No informarion about you :(");
+      setAvatar(userData.photoURL || null);
+      setFriends(friendCount);
+      setPosts(postsCount);
     }
-  }, [user]);
+  }, [userData]);
 
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -34,6 +39,7 @@ const ProfileScreen = (navigate) => {
       alert("Permission to access camera roll is required!");
       return;
     }
+
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -54,6 +60,7 @@ const ProfileScreen = (navigate) => {
     resizeMode="cover">
 
    <View style={styles.container}>
+    
      <View style={styles.imageWrapper}>
        <Image
           source={avatar ? { uri: avatar } : require('../../assets/avatar_paw_pal.png')}
@@ -68,25 +75,65 @@ const ProfileScreen = (navigate) => {
       </View>
 
       <Text style={styles.username}>{username}</Text>
-      <Text style={styles.email}>{email}</Text>
-  </View>
+      
+      <Text style={styles.subTitle}>{bio }</Text>
+       
+    
+      <View style={styles.statsContainer}>
+          <View style={styles.statItem}>
+              <Text style={styles.statLabel}>POSTS</Text>
+              <Text style={styles.statValue}>{posts}</Text>
+          </View>
 
+      <View style={styles.divider} />
+          <View style={styles.statItem}>
+              <Text style={styles.statLabel}>FRIENDS</Text>
+              <Text style={styles.statValue}>{friends}</Text>
+          </View>
+      </View>
+
+      <View style={styles.buttonRow}>
+          <TouchableOpacity style={styles.button}
+              onPress={() =>  navigation.navigate("EditProfile")}
+          >
+             <Image source={require('../../assets/edit_profil_icon.png')} style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>Edit Profile</Text>
+              
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button}>
+             <Image source={require('../../assets/post_icon.png')} style={styles.buttonIcon} />
+            <Text style={styles.buttonText}>Create Post</Text>
+          </TouchableOpacity>
+      </View>
+
+
+</View>
+ 
 </ImageBackground>
   );
 };
 
 export default ProfileScreen;
 
+
 const styles = StyleSheet.create({
-  imageWrapper: {
+ imageWrapper: {
     width: 150,
     height: 150,
     borderRadius: 35,
     overflow: 'hidden',
-    position: 'relative',
-    marginBottom: 20,
+    backgroundColor: '#fff',
+    marginBottom: 10,
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
   },
-  image: {
+  container: {
+  alignItems: 'center',
+  paddingHorizontal: 20,
+  paddingBottom: 40,
+  },
+   image: {
     width: '100%',
     height: '100%',
   },
@@ -103,34 +150,105 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
   },
-  background: {
+   background: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'flex-start', // чтобы содержимое было сверху
-    paddingTop: 40, // отступ сверху
+    paddingTop: 20, // отступ сверху
   },
-  container: {
+   block: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    marginTop: 10,
+    marginBottom: 20,
+    width: '90%',
     alignItems: 'center',
   },
-  imageContainer: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
   username: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 5,
+      fontSize: 22,
+      fontWeight: 'bold',
+      color: '#333',
+      marginBottom: 5,
   },
-  email: {
+   
+  subTitle: {
     fontSize: 16,
     color: '#666',
+    marginBottom: 10,
   },
+  
+  statsContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    marginTop: 20,
+    width: '90%',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+ statLabel: {
+  fontSize: 12,
+  color: '#aaa',
+  textTransform: 'uppercase',
+  marginBottom: 5,
+},
+  statValue: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+},
+divider: {
+  width: 1,
+  height: '70%',
+  backgroundColor: '#eee',
+  marginHorizontal: 10,
+},
+statItem: {
+  alignItems: 'center',
+  flex: 1,
+},
+buttonRow: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  width: '90%',
+  marginTop: 20,
+  gap: 10, // расстояние между кнопками
+},
+button: {
+  flex: 1,
+  backgroundColor: '#FF6347',
+  flexDirection: 'row',
+  paddingHorizontal: 20,
+  gravity: 'center',
+  paddingVertical: 12,
+  borderRadius: 10,
+  alignItems: 'center',
+  shadowColor: '#000',
+  shadowOffset: { width: 0, height: 2 },
+  shadowOpacity: 0.2,
+  shadowRadius: 4,
+  elevation: 3,
+},
+buttonText: {
+  color: '#fff',
+  fontSize: 16,
+  fontWeight: 'bold',
+},
+buttonIcon: {
+  width: 18,
+  height: 18,
+  marginRight: 5,
+  backgroundColor: 'transparent',
+  resizeMode: 'contain',
+   tintColor: '#fff',
+},
+
 });

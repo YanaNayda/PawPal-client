@@ -10,6 +10,7 @@ import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { Image } from "react-native";
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { sendEmailVerification } from "firebase/auth";
+import axios from 'axios';
 
  
 const SignUpScreen = ({navigation}) => {
@@ -31,7 +32,6 @@ const SignUpScreen = ({navigation}) => {
   
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
     const auth = getAuth(app);
     const [Name, setTextName] = useState('');
     const [Email, setTextEmail] = useState('');
@@ -119,30 +119,25 @@ const SignUpScreen = ({navigation}) => {
                   alert("Passwords do not match!");
                   return;
                 }
-
-                if (Password !== ConfirmPassword) {
-                  alert("Passwords do not match!");
-
-                  return;
-                }
-                createUserWithEmailAndPassword(auth, Email, Password)
-                .then((userCredential) => {
-                  const user = userCredential.user;
-              
                 
-                  sendEmailVerification(user)
-                    .then(() => {
-                      alert("We send a verification email to your email address. Please check your inbox.");  
-                      navigation.navigate("LogIn"); 
-                    })
-                    .catch((error) => {
-                      console.error("Error ", error.message);
-                      alert("Error " + error.message);
-                    });
+               createUserWithEmailAndPassword(auth, Email, Password).then((userCredential) => {
+                const user = userCredential.user;
+                console.log("Firebase user created:", user.uid);
+                return axios.post('http://192.168.68.95:3000/api/users', {
+                  uid: user.uid,
+                  email: user.email,
+                  displayName: Name
+                });
+              }).then((response) => {
+                console.log("User created in MongoDB:", response.data);
+                return sendEmailVerification(auth.currentUser);})
+                .then(() => {
+                  alert("We sent a verification email to your email address. Please check your inbox.");  
+                  navigation.navigate("LogIn");
                 })
                 .catch((error) => {
-                  console.error("Registration error:", error.message);
-                  alert("Registration error: " + error.message);
+                  console.error("Error during registration flow:", error.message);
+                  alert("Error: " + error.message)
                 });
             }
           }     
