@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import {View,Text,StyleSheet,ImageBackground,Image,TouchableOpacity,TextInput,ScrollView, Button,} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useUser } from '../../context/UserContext';
+
+
  
  
 const EditProfile = ({navigation }) => {
@@ -12,8 +14,6 @@ const EditProfile = ({navigation }) => {
   const [username, setUsername] = useState('');
   const [bio, setBio] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [posts, setPosts] = useState(0);  
-  const [friends, setFriends] = useState(0);  
 
   useEffect(() => {
     if (userData) {
@@ -52,7 +52,6 @@ const EditProfile = ({navigation }) => {
 
       <ScrollView contentContainerStyle={styles.container}>
 
-
      <View style={styles.imageWrapper}>
             <Image
                source={avatar ? { uri: avatar } : require('../../assets/avatar_paw_pal.png')}
@@ -64,7 +63,7 @@ const EditProfile = ({navigation }) => {
                  style={styles.icon}
                />
              </TouchableOpacity>
-    </View>
+     </View> 
         
          <View style={{ width: '100%' }}>
             <Text style={styles.questionText}> Your Name* </Text>
@@ -76,7 +75,6 @@ const EditProfile = ({navigation }) => {
           onChangeText={setUsername}
           placeholder="Enter your name"
         />
-        
         <View style={{ width: '100%' }}>
             <Text style={styles.questionText}>  What do you want to share?</Text>
         </View>
@@ -116,8 +114,13 @@ const EditProfile = ({navigation }) => {
         <Button 
             style={styles.button}
             title="Save Change"
-            onPress={() => navigation.navigate("Profile")} 
-            color="#FF6347" 
+            onPress={() => navigation.navigate('Main', {
+                    screen: 'MainTabs',
+                    params: {
+                      screen: 'Home'
+                    },
+                  })
+              }
         />
       
       </ScrollView>

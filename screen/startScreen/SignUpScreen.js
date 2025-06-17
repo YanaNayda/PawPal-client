@@ -123,7 +123,7 @@ const SignUpScreen = ({navigation}) => {
                createUserWithEmailAndPassword(auth, Email, Password).then((userCredential) => {
                 const user = userCredential.user;
                 console.log("Firebase user created:", user.uid);
-                return axios.post('http://192.168.68.95:3000/api/users', {
+                return axios.post('http://192.168.142.95:3000/api/users', {
                   uid: user.uid,
                   email: user.email,
                   displayName: Name

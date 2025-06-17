@@ -72,7 +72,7 @@ export default function LogInScreen({ navigation }) {
 
                 if (user.emailVerified = true) {
                    
-                  const response = await axios.get(`http://192.168.68.95:3000/api/users/${user.uid}`);
+                  const response = await axios.get(`http://192.168.142.95:3000/api/users/${user.uid}`);
                   const userData = response.data;
 
                   console.log("User from server:", userData);
@@ -158,7 +158,6 @@ const styles = StyleSheet.create({
       paddingVertical: 10,
       paddingTop: 15,
       paddingBottom: 15,
-      fontSize: 16,
       color: '#000',
     },
 
