@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {View,Text,StyleSheet,ImageBackground,Image,TouchableOpacity,Button,TextInput,ScrollView,Platform,KeyboardAvoidingView,Keyboard,Alert,} from 'react-native';
+import {View,Text,StyleSheet,Pressable,ImageBackground,Image,TouchableOpacity,Button,TextInput,ScrollView,Platform,KeyboardAvoidingView,Keyboard,Alert,} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import backgroundImage from '../../../assets/background_paw_pal.png';
 import { useUser } from '../../../context/UserContext.js';
@@ -8,30 +8,51 @@ import uuid from 'react-native-uuid';
 import MarketSegmentedButtons from '../components/MarketSegmentedButtons.js';
 import SwitchProduct from '../components/SwitchProduct.js';
 import ListCategoriesProducts from '../components/ListCategoriesProduct.js';
- 
+ import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
+ import { SegmentedButtons } from 'react-native-paper';
+ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { FlatList } from 'react-native-gesture-handler';
+
 
 const CreateProduct = ({ navigation }) => {
-   const [photo, setPhoto] = useState(null);
+ const [photo, setPhoto] = useState(null);
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
   const [status, setStatus] = useState('');
   const [title, setTitle] = useState('');
+  const [selectedId, setSelectedId] = useState(null);
   const { userData } = useUser();
- 
+
+  const DATA = [
+    { id: '1', title: 'Other' },
+    { id: '2', title: 'Animal' },
+    { id: '3', title: 'Pet Supplies' },
+    { id: '4', title: 'Food' },
+    { id: '5', title: 'Toys' },
+    { id: '6', title: 'Accessories' },
+    { id: '7', title: 'Clothing' },
+    { id: '8', title: 'Health' },
+    { id: '9', title: 'Grooming' },
+    { id: '10', title: 'Training' },
+    { id: '11', title: 'Adoption' },
+    { id: '12', title: 'Services' },
+    { id: '13', title: 'Veterinary' },
+  ];
 
   const pickImage = async () => {
-   try {
+    try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permissionResult.granted) {
-        Alert.alert('Permission required', 'Gallery permission is required to select a photo.');
+        Alert.alert('Permission Required', 'Gallery permission is needed to select a photo.');
         return;
       }
       const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
-        quality: 1,
+        quality: 0.8,
       });
       if (!result.canceled && result.assets?.length > 0) {
         setPhoto(result.assets[0].uri);
@@ -42,50 +63,63 @@ const CreateProduct = ({ navigation }) => {
     }
   };
 
-  const deletePhoto = () => {
-    setPhoto(null);
-  };
+  const deletePhoto = () => setPhoto(null);
 
   const handleSubmit = async () => {
     if (!description || !photo || !location || !price || !category || !status || !title) {
-      Alert.alert('Error', 'Please fill in all fields');
+      Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
 
     try {
-      const newPost = await axios.post('http://192.168.1.83:3000/api/v1/products/createProduct', {
+      await axios.post('http://192.168.1.83:3000/api/v1/products/createProduct', {
         productId: uuid.v4(),
         seller: userData?.uid,
-        description : description,
-        location: location,
+        description,
+        location,
         imageUrl: photo,
-        category : category,
-        title: title,  
+        category,
+        title,
         price: Number(price),
         isDeleted: false,
       });
 
-      navigation.navigate('Main', {
-        screen: 'PawPal',
-        params: {
-          screen: 'Marketplace',
+      Alert.alert('Success', 'Product submitted successfully!', [
+        {
+          text: 'OK',
+          onPress: () =>
+            navigation.navigate('Main', {
+              screen: 'PawPal',
+              params: { screen: 'Marketplace' },
+            }),
         },
-      });
-
-      Alert.alert('Success', 'Post submitted successfully!');
+      ]);
     } catch (error) {
       console.error('Submit Error:', error);
-      Alert.alert('Post submit failed', error.response?.data?.message || error.message);
+      Alert.alert('Error', error.response?.data?.message || 'Failed to submit product');
     }
   };
 
-  return (
- <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
-   <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingView}
+  const renderItem = ({ item }) => {
+    const backgroundColor = item.id === selectedId ? '#6e3b6e' : '#f9c2ff';
+    const color = item.id === selectedId ? 'white' : 'black';
+
+    return (
+      <TouchableOpacity
+        onPress={() => {
+          setCategory(item.title);
+          setSelectedId(item.id);
+        }}
+        style={[styles.item, { backgroundColor }]}
       >
-       
+        <Text style={[styles.title, { color }]}>{item.title}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+return (
+ <ImageBackground source={backgroundImage} style={styles.background} resizeMode="cover">
+ 
           <View style={styles.header}>
             <Image
               source={userData?.avatar ? { uri: userData.avatar } : backgroundImage}
@@ -95,45 +129,46 @@ const CreateProduct = ({ navigation }) => {
           </View>
 
         <View style={styles.container}>
-           <View style={styles.imageWrapper}>
-              {photo ? (
-                   <Image source={{ uri: photo }} style={styles.image} />
-                ) : (
-              <View style={styles.placeholder}>
-                    <Text style={styles.placeholderText}>No photo selected</Text>
-            </View>
-          )}
-          </View>
 
-          <View style={styles.buttonRow}>
-            
-            <TouchableOpacity style={[styles.actionButton, styles.deleteButton]} onPress={deletePhoto} activeOpacity={0.8}>
-                <Image source={require('../../../assets/delete.png')} style={styles.buttonIcon} />
-                <Text style={styles.buttonText}>Delete</Text>
-            </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.actionButton, styles.addButton]} onPress={pickImage} activeOpacity={0.8}>
-                <Image source={require('../../../assets/add.png')} style={styles.buttonIcon} />
-                <Text style={styles.buttonText}>Add</Text>
-            </TouchableOpacity>
+       <View style={styles.containerRow}> 
+  
+  <View style={styles.leftColumn}> 
+
+    <View style={styles.imageWrapper}>
+      {photo ? (
+        <Image source={{ uri: photo }} style={styles.image} />
+      ) : (
+        <View style={styles.placeholder}>
+          <Text style={styles.placeholderText}>No photo selected</Text>
         </View>
-    
-          
+      )}
+    </View>
 
-            <TextInput
-              style={[styles.input, { zIndex: 10 }]}
-              placeholder="Set your location"
-              placeholderTextColor="#888"
-              value={location}
-              onChangeText={text => {
-                if (text.length <= 200) setLocation(text);
-              }}
-              multiline={true}
-              numberOfLines={1}
-            />
+    <View style={styles.buttonRow}>
+       <View style={styles.buttonWrapper}> 
+      <Button 
+        color="#d9534f"
+        title="Delete"
+        onPress={() => deletePhoto()}
+      />
+      </View>
+      <View style={styles.buttonWrapper}>
+      <Button
+        color="#d9534f"
+        title="Add"
+        onPress={() => pickImage()}
+      />
+      </View>
+       
+    </View>
+  </View>
 
-            <TextInput
-              style={[styles.input, { zIndex: 10 }]}
+  {/* Правая часть — поле ввода локации */}
+  <View style={styles.rightColumn}>
+
+     <TextInput
+        style={[styles.input, {   }]}
               placeholder="Title of your product"
               placeholderTextColor="#888"
               value={title}
@@ -141,31 +176,23 @@ const CreateProduct = ({ navigation }) => {
                 if (text.length <= 200) setTitle(text);
               }}
               multiline={false}
-              numberOfLines={1}
-            />
+          numberOfLines={1}
+          /> 
 
-            <TextInput
-              style={[styles.input, styles.inputMultiline, { zIndex: 10 }]}
-              placeholder="Tell about your product..."
-              placeholderTextColor="#888"
-              value={description}
-              onChangeText={text => {
-                if (text.length <= 200) setDescription(text);
-              }}
-              multiline={true}
-              numberOfLines={4}
-            />
-
-            
-            <Text style={styles.label}>Condition *</Text>
-            <MarketSegmentedButtons setStatus={setStatus} />
-
-            <View style={{ zIndex: 10, marginVertical: 10 }}>
-              <ListCategoriesProducts setCategory={setCategory} />
-            </View>
-             
-            <TextInput
-              style={[styles.input, { zIndex: 10 }]}
+    <TextInput
+       style={styles.input}
+      placeholder="Set your location"
+      placeholderTextColor="#888"
+      value={location}
+      onChangeText={text => {
+        if (text.length <= 200) setLocation(text);
+      }}
+      multiline={true}
+      numberOfLines={3}
+      
+    />
+       <TextInput
+             style={[styles.input, { }]}
               placeholder="Set your price"
               placeholderTextColor="#888"
               value={price.toString()}
@@ -178,18 +205,70 @@ const CreateProduct = ({ navigation }) => {
               multiline={false}
               keyboardType="numeric"
             />
-            <View style={styles.textRow}>
-            <Text style={styles.textSubmitt}> Free to a good home.</Text>
-            <SwitchProduct />
-            </View>
 
-            <TouchableOpacity style={styles.buttonSubmit} onPress={handleSubmit} activeOpacity={0.7}>
-              <Text style={styles.textSubmitt}>Submit Product</Text>
-            </TouchableOpacity>
+         <View style={styles.textRow}>
+            <Text style={styles.text}> Free to a good home.</Text>
+            <SwitchProduct />
+            </View>    
+
           </View>
-   
-      </KeyboardAvoidingView>
-    </ImageBackground>
+          </View>
+    
+           <View style={{   flexWrap: 'nowrap',  }}> 
+            <TextInput
+              style={[styles.input, styles.inputMultiline, {  }]}
+              placeholder="Tell about your product..."
+              placeholderTextColor="#888"
+              value={description}
+              onChangeText={text => {
+                if (text.length <= 200) setDescription(text);
+              }}
+              multiline={true}
+              numberOfLines={7}
+            />
+            </View>
+             
+            
+             
+             
+
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'flex-start', gap:5 }}>
+           {DATA.map((item) => (
+           <Pressable
+           key={item.id}
+            onPress={() => {
+                setCategory(item.title);
+                setSelectedId(item.id);
+              }}
+              style={{
+               backgroundColor: item.id === selectedId ? "#d9534f" : '#ffffff',
+              padding: 12,
+               borderRadius: 5,
+               margin: 3,
+              borderWidth: 1,
+              borderColor: '#ccc',
+              }}
+        >
+               <Text style={{ color: item.id === selectedId ? 'white' : 'black' }}>
+                {item.title}
+               </Text>
+            </Pressable>
+                    ))}
+          </View>
+             
+             
+
+            <View style={styles.buttonSubmit}>
+              <Button
+                color="#d9534f"
+                title="Submit Product"
+                onPress={() => handleSubmit()}
+              />
+             </View>
+             
+
+          </View>
+         </ImageBackground>
   );
 };
 
@@ -198,56 +277,52 @@ export default CreateProduct;
 const styles = StyleSheet.create({
  container: {
     alignItems: 'right',
-    padding: 16,
+    padding: 12,
+  },
+  containerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   keyboardAvoidingView: {
     flex: 1,
   },
-  scrollContainer: {
-    flexGrow: 1,
-    padding: 20,
-    paddingBottom: 80,
-  }, 
-  actionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 2 },
-  },
-  boxcolunn: {
+    buttonRow: {
     flexDirection: 'column',
-    alignItems: 'center',
-    borderRadius: 10,
-    padding: 5,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    marginTop: 10,
-    backgroundColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-    gap: 5,
+    justifyContent: 'space-between',
+
+    width:'100%',
+    
+  },
+  buttonWrapper: {
+    flex: 1, 
 
   },
+
+   rightColumn: {
+    flex: 5,
+     
+   paddingLeft: 10,
+    justifyContent: 'top',
+    
+  },
+   leftColumn: {
+     flex: 5,
+     
+  },
+ 
+ 
   textRow: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    gap: 10,
+     
   } ,
   buttonRow: {
     flexDirection: 'row',
- 
-    gap: 16,
-    marginTop: 5,
+    gap: 3,
+     
+     justifyContent: 'right',
   },
    deleteButton: {
     backgroundColor: '#ff6b6b',
@@ -257,9 +332,10 @@ const styles = StyleSheet.create({
   },
   buttonSubmit: {
     height: 50,
+    width: '100%',
     backgroundColor: '#FF6347',
     borderRadius: 10,
-    padding: 5,
+    padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
@@ -269,28 +345,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  button: {
-    flex: 1,
-    backgroundColor: '#da3b3bff',
-    flexDirection: 'row',
-    paddingHorizontal: 20,
-    paddingVertical: 5,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-   
-  },
-  buttonIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 5,
-    resizeMode: 'contain',
-    tintColor: '#000000',
-  },
-  buttonText: {
-    color: '#000000',
-    fontSize: 16,
-  },
+ 
   input: {
     backgroundColor: '#fff',
     borderColor: '#ccc',
@@ -299,8 +354,7 @@ const styles = StyleSheet.create({
     padding: 15,
     fontSize: 16,
     marginBottom: 10,
-    marginTop: 15,
-    
+    marginTop: 10,
     textAlignVertical: 'top',
   },
   inputMultiline: {
@@ -322,15 +376,15 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   avatar: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     borderRadius: 25,
     backgroundColor: '#080327',
     marginRight: 10,
   },
    imageWrapper: {
-    width: 250,
-    height: 250,
+    width:'100%',
+    height: 200,
     borderRadius: 16,
     overflow: 'hidden',
     backgroundColor: '#f0f0f0',
@@ -345,6 +399,7 @@ const styles = StyleSheet.create({
     height: '100%',
     
   },
+    
    placeholder: {
     flex: 1,
     justifyContent: 'center',

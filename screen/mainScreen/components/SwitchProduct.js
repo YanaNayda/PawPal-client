@@ -6,7 +6,7 @@ const SwitchProduct = () => {
 
   const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn);
 
-  return <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />;
+  return <Switch value={isSwitchOn} onValueChange={onToggleSwitch} color='#FF6347' marginLeft = {10} />;
 };
 
 export default SwitchProduct;
