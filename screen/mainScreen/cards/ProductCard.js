@@ -4,36 +4,38 @@ import {ImageBackground, TouchableOpacity , Button,TextInput} from 'react-native
  import { FontAwesome } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
+import backgroundImage from '../../../assets/background_paw_pal.png';
+import noImage from '../../../assets/no_image.png';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-export default function ProductCard({ product, onLikePress, onCommentPress, onSavePress }) {
-  product.likes = product.likes || 0;  
+
+export default function ProductCard({product}) {
+
     return (
-        <View style ={styles.ProductCard}>
-            {product.imageUrl &&(
-                <Image source={{ uri: product.imageUrl }} style={styles.productImage} />
+        <View style ={styles.productCard}>
+            <Image
+              source={
+               product.imageUrl
+                    ? { uri: product.imageUrl }
+                         : noImage }
+                style={{ width: '100%', height: 150, borderRadius: 8 }}
+                resizeMode="cover"
+                />
             
-            )}
-            <Text style ={styles.productText}>{product.content}</Text>
+            
+            <Text style ={styles.productTextTitle}>{product.title}</Text>
+            <Text style ={styles.productTextCategories}>{product.category}</Text>
+            <View style={styles.Row}> 
+               <Icon name="location-pin" size={16} color="#FF6347S" style={{ marginRight: 3 }}/>
+             <Text style ={styles.productText}>Location: {product.location}</Text>
+           </View>
+
+            <View style={styles.Row}>
             <Text style={styles.productDate}>
             {new Date(product.createdAt).toLocaleDateString()}
            </Text>
-
-            <View style={styles.Row}>
-                <TouchableOpacity onPress={() => onLikePress(product._id)} style={styles.Button}>
-                    <FontAwesome name="heart-o" size={20} color="black" />
-                    <Text style={styles.actionText}>{product.likes}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => onCommentPress(product._id)} style={styles.Button}>
-                    <Feather name="message-circle" size={20} color="black" />
-                    <Text style={styles.actionText}>Comment</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => onSavePress(product._id)} style={styles.Button}>
-                    <MaterialIcons name="bookmark-border" size={20} color="black" />
-                     <Text style={styles.actionText}>Save</Text>
-                </TouchableOpacity>
-            </View>
+            <Text style ={styles.productText}>  {product.price} ₪</Text>
+           </View>
         </View>
     )
 }
@@ -57,12 +59,27 @@ productImage: {
 },
 productText: {
   fontSize: 16,
-  marginVertical: 10,
+   
 },
-producttDate: {
+productTextCategories: {
+  fontSize: 12,
+   
+},
+productTextTitle: {
+  fontSize: 18,
+  fontWeight: 'bold',
+   
+  marginTop: 5,
+  paddingBottom: 5,
+  color: '#333',
+  paddingRight: 20,
+   
+},
+productDate: {
   fontSize: 12,
   color: 'gray',
   textAlign: 'right',
+  paddingRight: 15,
 },
 Row: {
   flexDirection: 'row',
@@ -71,7 +88,7 @@ Row: {
   marginTop: 10,
   borderTopWidth: 1,
   borderTopColor: '#eee',
-  paddingTop: 10,
+  padding: 10,
 },
 Button: {
   flexDirection: 'row',

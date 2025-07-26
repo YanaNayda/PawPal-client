@@ -20,7 +20,8 @@ const CreateProduct = ({ navigation }) => {
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
   const [category, setCategory] = useState('');
-  const [status, setStatus] = useState('');
+ 
+  const [status, setStatus] = useState('')
   const [title, setTitle] = useState('');
   const [selectedId, setSelectedId] = useState(null);
   const { userData } = useUser();
@@ -66,20 +67,22 @@ const CreateProduct = ({ navigation }) => {
   const deletePhoto = () => setPhoto(null);
 
   const handleSubmit = async () => {
-    if (!description || !photo || !location || !price || !category || !status || !title) {
+    if (!description || !location || !price || !category  || !title) {
       Alert.alert('Error', 'Please fill in all required fields');
       return;
     }
 
     try {
-      await axios.post('http://192.168.1.83:3000/api/v1/products/createProduct', {
+      await axios.post('http://192.168.1.83:3000/api/v1/market/create-product-post', {
+         
+    
         productId: uuid.v4(),
         seller: userData?.uid,
-        description,
-        location,
+        description: description,
+        location:  location,
         imageUrl: photo,
-        category,
-        title,
+        category  : category,
+        title : title,
         price: Number(price),
         isDeleted: false,
       });
@@ -242,7 +245,7 @@ return (
               }}
               style={{
                backgroundColor: item.id === selectedId ? "#d9534f" : '#ffffff',
-              padding: 12,
+               padding: 12,
                borderRadius: 5,
                margin: 3,
               borderWidth: 1,

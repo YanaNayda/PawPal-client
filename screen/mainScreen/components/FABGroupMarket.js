@@ -15,17 +15,17 @@ const FabGroupMarket = () => {
         <FAB.Group
           open={open}
           visible
-          icon={open ? 'calendar-today' : 'plus'}
-            fabStyle={{ bottom: 70, right: 10, position: 'absolute' }} 
+          icon={open ? 'calendar-today' : 'paw'}
+            fabStyle={{ bottom: 70, right: 10, position: 'absolute' , backgroundColor: '#ffffffff' ,borderRadius: 23, elevation: 5 ,shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.3, shadowRadius: 7 }} 
           actions={[
-            { icon: 'plus', onPress: () => console.log('Pressed add') },
+            
             {
-              icon: 'star',
+              icon: 'plus',
               label: 'Add Product',
               onPress: () => navigation.navigate('CreateProduct'),
             },
             {
-              icon: 'email',
+              icon: 'account',
               label: 'My Products',
              onPress: () => navigation.navigate('ProductScreen'),
             }

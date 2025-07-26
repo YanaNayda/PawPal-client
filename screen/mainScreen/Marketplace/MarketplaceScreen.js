@@ -18,10 +18,39 @@ const MarketplaceScreen = () => {
    const navigation = useNavigation();
    const [searchQuery, setSearchQuery] = React.useState('');
   const {userData, setUserData } = useUser();
+  const [products, setProducts] = useState([]);
 
+   
+  
+
+useFocusEffect(
+  React.useCallback(() => {
+     
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch(`http://192.168.1.83:3000/api/v1/market`);
+        if(!res.ok) {
+          const text = await res.text();
+          console.error("Server returned error:", text);
+          throw new Error("Server error: " + res.status);
+        }
+        const data = await res.json();
+     
+        setProducts(data.productPosts);
+        console.log('Fetched products:', data);
+      } catch (error) {
+        console.error("Error fetching user posts", error);
+      }
+    };
+
+    
+   fetchProducts(); // Call fetchPosts here
+  }, [])
+);
 
   return (
     <View style={{ flex: 1, backgroundColor: '#f0f0f0', borderRadius: 10, shadowColor: '#000'  }  
+
     }>
         <ImageBackground
       source={backgroundImage}
@@ -29,24 +58,37 @@ const MarketplaceScreen = () => {
       resizeMode="cover"
     >
     <View style={styles.spacer}> 
+ 
+  
+
     <Searchbar
       placeholder="Search"
+      placeholderTextColor="#888"
+      style={{  margiTop: 15, borderRadius: 10, borderWidth: 2,  borderColor: '#bababaff', backgroundColor: '#fefefeff' }}
       onChangeText={setSearchQuery}
       value={searchQuery}
     />
     </View>
     
       {isFocused && <FabGroupMarket />}
-   
+ 
 
-      <FlatList
-      data={[]}
-      renderItem={({ item }) => <ProductCard product={item} />}
-      keyExtractor={(item) => item._id}
-      contentContainerStyle={{ padding: 10 }} 
-      ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>No products found</Text>}
-      style={{ flex: 1 }}
-    />
+    <FlatList
+        data={products}
+        keyExtractor={(item) => item._id}
+         numColumns={2}
+        renderItem={({ item }) => (
+        <TouchableOpacity onPress={() => navigation.navigate('Marketplace', { productId: item._id })}
+          style={{ width: '50%', padding: 8 }}> 
+            <ProductCard product={item} />
+        </TouchableOpacity>
+          )}
+           columnWrapperStyle={{ justifyContent: "space-between" }}
+        contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 10 }}
+        ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>No products found</Text>}
+        style={{ flex: 1 }}
+        />
+
     </ImageBackground>
      
     </View>
