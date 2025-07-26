@@ -1,26 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ImageBackground, Image, TouchableOpacity , Button} from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, Image,TouchableOpacity , Button} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { useUser } from '../../context/UserContext';
 import EditProfile from './EditProfile';
-import { ScrollView } from 'react-native-gesture-handler'
+import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native';
+ import CreatePost from './CreatePost';
+ import { useFocusEffect } from '@react-navigation/native';
+ import axios from 'axios';
+ import PostCard from '../mainScreen/cards/PostCard'
  
 
-
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ( ) => {
 
   
-  const { userData } = useUser(); 
-
+   const navigation = useNavigation();
+  const {userData, setUserData } = useUser();
   const [avatar, setAvatar] = useState(null);
-  const [email, setEmail] = useState(" ");
   const [username, setUsername] = useState(" ");
   const [bio, setBio] = useState(" ");
   const [friends, setFriends] = useState(" ");
   const [posts, setPosts] = useState(" ");
   const friendCount = userData?.friends?.length || 0;  
-  const postsCount = userData?.posts?.length || 0;
+  const postsCount = userData?.userPostsCount || 0;
+  const [userPosts, setUserPosts] = useState([]);
  
 
   useEffect(() => {
@@ -30,8 +33,40 @@ const ProfileScreen = ({navigation}) => {
       setAvatar(userData.photoURL || null);
       setFriends(friendCount);
       setPosts(postsCount);
+    
     }
   }, [userData]);
+ 
+  useFocusEffect(
+  React.useCallback(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await axios.get(`http://192.168.1.83:3000/api/v1/users/${userData.uid}`);
+        setUserData(res.data.user);
+      } catch (e) {
+        console.log('Failed to fetch user:', e);
+      }
+    };
+
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch(`http://192.168.1.83:3000/api/v1/posts/user/${userData.uid}`);
+        if (!res.ok) {
+          const text = await res.text();
+          console.error("Server returned error:", text);
+          throw new Error("Server error: " + res.status);
+        }
+        const data = await res.json();
+        setUserPosts(data);
+      } catch (error) {
+        console.error("Error fetching user posts", error);
+      }
+    };
+
+    fetchUser();
+    fetchPosts(); // Call fetchPosts here
+  }, [userData.uid])
+);
 
   const pickImage = async () => {
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -50,9 +85,15 @@ const ProfileScreen = ({navigation}) => {
     if (!result.canceled) {
       setAvatar(result.assets[0].uri);
     }
-  };
+      await axios.put(`http://192.168.1.83:3000/api/v1/users/${userData.uid}`, {
+     photoURL: result.assets[0].uri,
+        
+    });
 
+  }; 
 
+  
+   
   return (
   <ImageBackground
     source={require('../../assets/background_paw_pal.png')}
@@ -60,29 +101,26 @@ const ProfileScreen = ({navigation}) => {
     resizeMode="cover">
 
    <View style={styles.container}>
-    
-     <View style={styles.imageWrapper}>
-       <Image
-          source={avatar ? { uri: avatar } : require('../../assets/avatar_paw_pal.png')}
-          style={styles.image}
-        />
-        <TouchableOpacity style={styles.iconOverlay} onPress={pickImage}>
-          <Image
-            source={require('../../assets/icon_camera.png')}  
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
+        <View style={styles.block}>
+          <View style={styles.profileRow}>
+            <View style={styles.imageWrapper}>
+              <Image
+                source={avatar ? { uri: avatar } : require('../../assets/avatar_paw_pal.png')}
+                style={styles.image}
+              />
+            </View>
+            <View style={styles.textContainer}>
+              <Text style={styles.username}>{username}</Text>
+              <Text style={styles.subTitle}>{bio}</Text>
+            </View>
+          </View>
+        </View>
 
-      <Text style={styles.username}>{username}</Text>
-      
-      <Text style={styles.subTitle}>{bio }</Text>
-       
-    
+
       <View style={styles.statsContainer}>
           <View style={styles.statItem}>
               <Text style={styles.statLabel}>POSTS</Text>
-              <Text style={styles.statValue}>{posts}</Text>
+              <Text style={styles.statValue}>{postsCount}</Text>
           </View>
 
       <View style={styles.divider} />
@@ -100,15 +138,37 @@ const ProfileScreen = ({navigation}) => {
             <Text style={styles.buttonText}>Edit Profile</Text>
               
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button}>
+          <TouchableOpacity style={styles.button}
+          onPress={() =>  navigation.navigate("CreatePost")}
+          >
              <Image source={require('../../assets/post_icon.png')} style={styles.buttonIcon} />
             <Text style={styles.buttonText}>Create Post</Text>
+          
           </TouchableOpacity>
       </View>
 
-
+      <View style={ styles.postCard }>
+        <FlatList
+            data={userPosts}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => (
+              <TouchableOpacity  onPress={() => navigation.navigate('PostScreen', { postId: item.postId })}>
+            <PostCard
+                  
+                  style={styles.postCard}
+                  onLikePress={() => console.log('Like pressed for post', item._id)}
+                  onCommentPress={() => console.log('Comment pressed for post', item._id)}
+                  onSavePress={() => console.log('Save pressed for post', item._id)}
+                  post={item}
+                  
+            />
+            </TouchableOpacity>
+    )}
+    contentContainerStyle={{ }}
+    ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>You haven't some posts </Text>}
+  />
 </View>
- 
+</View>
 </ImageBackground>
   );
 };
@@ -117,21 +177,27 @@ export default ProfileScreen;
 
 
 const styles = StyleSheet.create({
- imageWrapper: {
-    width: 150,
-    height: 150,
-    borderRadius: 35,
+ profileRow: {
+    flexDirection: 'row', 
+    alignItems: 'center',
+    width: '100%',
+  },
+  imageWrapper: {
+    width: 100,  
+    height: 100,
+    borderRadius: 50,
     overflow: 'hidden',
+    alignItems: 'rigth',
     backgroundColor: '#fff',
-    marginBottom: 10,
+    marginRight: 10,  
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 4,
   },
   container: {
   alignItems: 'center',
-  paddingHorizontal: 20,
-  paddingBottom: 40,
+  paddingHorizontal: 5,
+  paddingTop: 10,
   },
    image: {
     width: '100%',
@@ -144,7 +210,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 15,
     padding: 5,
-    elevation: 3,
+    elevation: 5,
   },
   icon: {
     width: 20,
@@ -153,15 +219,15 @@ const styles = StyleSheet.create({
    background: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-start', // чтобы содержимое было сверху
-    paddingTop: 20, // отступ сверху
+    justifyContent: 'flex-start',  
+     
   },
    block: {
     backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 20,
-    marginTop: 10,
-    marginBottom: 20,
+    padding: 10,
+    marginTop: 5,
+     
     width: '90%',
     alignItems: 'center',
   },
@@ -182,8 +248,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#fff',
     borderRadius: 15,
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
     marginTop: 20,
     width: '90%',
     justifyContent: 'space-around',
@@ -219,8 +285,8 @@ buttonRow: {
   flexDirection: 'row',
   justifyContent: 'space-between',
   width: '90%',
-  marginTop: 20,
-  gap: 10, // расстояние между кнопками
+  marginTop: 10,
+  gap: 5,  
 },
 button: {
   flex: 1,
@@ -250,5 +316,20 @@ buttonIcon: {
   resizeMode: 'contain',
    tintColor: '#fff',
 },
-
+postCard: {
+  backgroundColor: 'transparent',
+  borderRadius: 12,
+  padding: 10,
+  width: '100%',
+  height: '100%',
+  marginBottom: 15,
+  flex: 1,
+  flexDirection: 'row',
+  paddingHorizontal: 20,
+  gravity: 'center',
+  paddingVertical: 12,
+  borderRadius: 10,
+  alignItems: 'center',
+  
+}
 });

@@ -16,6 +16,7 @@
 //   1.4 Change LOad Image - don't working 
 // 2.DataBase 
 //   2.1 Check socket
+//   2.2 - chrck how can i create cute loading (in the end of the screen)
 
 
 //               Features 

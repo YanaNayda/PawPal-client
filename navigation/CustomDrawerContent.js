@@ -1,23 +1,23 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { DrawerContentScrollView, DrawerItemList } from '@react-navigation/drawer';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useUser } from '../context/UserContext';
  
-import { auth, signOut } from '../firebase/FirebaseConfig';
  
 
 export default function CustomDrawerContent(props) {
     const { navigation } = props;
     const { setUserData } = useUser();
-    const handleLogout = () => {
-     signOut(auth)
-     .then(() => {
-       setUserData(null);
-        navigation.replace('LogIn')})
-      .catch((error) => {
-        console.error('Error signing out: ', error);
-        });
-    }
+  const handleLogout = async () => {
+  try {
+    await AsyncStorage.removeItem("token");  
+    setUserData(null);
+    navigation.replace("LogIn");
+  } catch (error) {
+    console.error("Error clearing token: ", error);
+  }
+};
 
     return (
        <View style={{ flex: 1 }}>

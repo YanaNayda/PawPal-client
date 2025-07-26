@@ -2,24 +2,13 @@ import { StyleSheet } from "react-native";
 import React, { useState } from "react"; 
 import { View, Text, Button ,TextInput } from "react-native";
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { getAuth, sendPasswordResetEmail } from "firebase/auth";
 import { Keyboard, TouchableWithoutFeedback } from 'react-native';
-
+import axios from 'axios';
+import { Alert } from 'react-native';
 
 export default function ForgotPasswordScreen({ navigation })  {
 
-    const firebaseConfig = {
-    apiKey: "AIzaSyAj75ig-SRJ9hVDBug3mp_KG2YulyYmPm4",
-    authDomain: "pawpal-72f36.firebaseapp.com",
-    projectId: "pawpal-72f36",
-    storageBucket: "pawpal-72f36.firebasestorage.app",
-    messagingSenderId: "258494045146",
-    appId: "1:258494045146:web:33a169d104a831ae2f7ee3",
-    measurementId: "G-WLSC5L76D9"
-    };
-   
-    // Initialize Firebase
-    const auth = getAuth();
+
 
     const [email, setTextEmail] = useState('');
   
@@ -56,9 +45,8 @@ export default function ForgotPasswordScreen({ navigation })  {
          marginTop={25}S
          style={styles.button}
          onPress={() => {
-
             if (email === "") {
-              alert("Please fill in all fields!");
+              Alert.alert("Validation Error", "Please fill in all fields!");
               return;
             }
           
@@ -67,18 +55,22 @@ export default function ForgotPasswordScreen({ navigation })  {
               return;
             }
 
-            sendPasswordResetEmail(auth, email)
-              .then(() => {
-                alert("Password reset email sent!");
-                navigation.navigate("LogIn");
-              })
-            .catch((error) => {
-             const errorCode = error.code;
-             const errorMessage = error.message;
-             alert("Error: " + error.message);
-    
-          });
-          
+            axios.post('http://192.168.1.83:3000/api/v1/auth/forgotpassword', {email})
+
+                      .then(res => {
+                        //Alert is async ? 
+                      alert('Success', res.data.message);
+                          
+                       setTimeout(() => {
+                            Alert.alert("Password reset email sent!");
+                           navigation.navigate("LogIn");
+                       }, 100); // Wait for 1 second before navigating}
+                      
+                    })
+                     .catch(err => {
+                         alert("Error: " + err);
+                         Alert.alert("Something went wrong", err.response?.data?.message || err.message);
+              });
     }}
   />
 </View>

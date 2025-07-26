@@ -9,12 +9,14 @@ import WelcomeScreen from './screen/startScreen/WelcomeScreen';
 import SignUpScreen from './screen/startScreen/SignUpScreen';
 import LogInScreen from './screen/startScreen/LogInScreen';
 import HomeScreen from './screen/mainScreen/HomeScreen';
-import MarketplaceScreen from './screen/mainScreen/MarketplaceScreen';
+import MarketplaceScreen from './screen/mainScreen/Marketplace/MarketplaceScreen';
 import ProfileScreen from './screen/mainScreen/ProfileScreen';
 import ForgotPasswordScreen from './screen/startScreen/ForgotPasswordScreen';
 import HelpSupportScreen from './screen/additionalScreen/HelpSupportScreen';
 import SettingsScreen from './screen/additionalScreen/SettingsScreen';
 import SavedScreen from './screen/additionalScreen/SavedScreen';
+import PostScreen from './screen/mainScreen/PostScreen';
+import ProductScreen from './screen/mainScreen/Marketplace/ProductScreen';
 import { TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
 import ChatScreen from './screen/additionalScreen/ChatScreen';
@@ -23,7 +25,12 @@ import 'react-native-gesture-handler';
 import CustomDrawerContent from './navigation/CustomDrawerContent';
 import { UserProvider } from './context/UserContext';
 import EditProfile from './screen/mainScreen/EditProfile';
- 
+ import CreateProduct from './screen/mainScreen/Marketplace/CreateProduct';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import CreatePost from './screen/mainScreen/CreatePost';
+import { Provider as PaperProvider } from 'react-native-paper';
+import 'react-native-get-random-values';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -122,7 +129,9 @@ export default function App() {
   //mongodb+srv://naydenovayn:naydenovayn@cluster0.xc4mv5w.mongodb.net/
   //mongodb+srv://naydenovayn:<naydenovayn>@cluster0.zqsvtnb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
     return (
-    <UserProvider> 
+    <GestureHandlerRootView> 
+      <PaperProvider> 
+      <UserProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Welcome" component={WelcomeScreen} />
@@ -132,11 +141,17 @@ export default function App() {
           <Stack.Screen name="Main" component={DrawerNavigation}  />
           <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: true, title: 'Chat' }} />
           <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerShown: true, title: 'Edit Profile' }} />
-    
-        </Stack.Navigator>
-      </NavigationContainer>
-    </UserProvider>
-    );
+          <Stack.Screen name="CreatePost" component={CreatePost} options={{ headerShown: true, title: 'Create Post' }} />
+          <Stack.Screen name="Saved" component={SavedScreen} options={{ headerShown: true, title: 'Saved' }} />
+          <Stack.Screen name="ProductScreen" component={ProductScreen} options={{ headerShown: true, title: 'Product' }} />
+          <Stack.Screen name="CreateProduct" component={CreateProduct} options={{ headerShown: true, title: 'Add Product' }} />
+          <Stack.Screen name="PostScreen" component={PostScreen} options={{ headerShown: true, title: 'Post' }} />
+         </Stack.Navigator>
+        </NavigationContainer>
+      </UserProvider>
+      </PaperProvider>
+    </GestureHandlerRootView>
+  );
 }
 
  

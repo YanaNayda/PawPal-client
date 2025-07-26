@@ -1,38 +1,22 @@
-import { StyleSheet } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import React, { useState } from "react"; 
 import { View, Text, Button } from "react-native";
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { TextInput } from 'react-native';
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 import { Image } from "react-native";
 import { KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { sendEmailVerification } from "firebase/auth";
 import axios from 'axios';
 
  
 const SignUpScreen = ({navigation}) => {
-    const firebaseConfig = {
-    apiKey: "AIzaSyAj75ig-SRJ9hVDBug3mp_KG2YulyYmPm4",
-    authDomain: "pawpal-72f36.firebaseapp.com",
-    projectId: "pawpal-72f36",
-    storageBucket: "pawpal-72f36.firebasestorage.app",
-    messagingSenderId: "258494045146",
-    appId: "1:258494045146:web:33a169d104a831ae2f7ee3",
-    measurementId: "G-WLSC5L76D9"
-    };
-
+  
     const isValidEmail = (email) => {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return emailRegex.test(email);
     };
 
-  
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+   
     const [Name, setTextName] = useState('');
     const [Email, setTextEmail] = useState('');
     const [Password, setTextPassword] = useState('');
@@ -86,7 +70,7 @@ const SignUpScreen = ({navigation}) => {
            <Button
              title="Sign Up"
              color="#FF6347"
-              onPress={() => {
+              onPress={async () => {
                 if (Name === "" || Email === "" || Password === "" || ConfirmPassword === "") {
                   alert("Please fill in all fields!");
                   return;
@@ -119,26 +103,20 @@ const SignUpScreen = ({navigation}) => {
                   alert("Passwords do not match!");
                   return;
                 }
-                
-               createUserWithEmailAndPassword(auth, Email, Password).then((userCredential) => {
-                const user = userCredential.user;
-                console.log("Firebase user created:", user.uid);
-                return axios.post('http://192.168.142.95:3000/api/users', {
-                  uid: user.uid,
-                  email: user.email,
-                  displayName: Name
-                });
-              }).then((response) => {
-                console.log("User created in MongoDB:", response.data);
-                return sendEmailVerification(auth.currentUser);})
-                .then(() => {
-                  alert("We sent a verification email to your email address. Please check your inbox.");  
-                  navigation.navigate("LogIn");
-                })
-                .catch((error) => {
-                  console.error("Error during registration flow:", error.message);
-                  alert("Error: " + error.message)
-                });
+                console.log('Sign Up button pressed');
+                // Proceed with registration
+                try {
+                    const response = await axios.post('http://192.168.1.83:3000/api/v1/auth/register', {
+                        email: Email,
+                         password: Password,
+                         displayName: Name
+                         });
+                    alert("Successful registration!")
+                    navigation.navigate("LogIn") 
+                    console.log("Registration completed successfully.", response.data);
+                } catch (err) {
+                    Alert.alert("Registration failed", err.response?.data?.message || err.message);
+                }
             }
           }     
           />

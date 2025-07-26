@@ -2,12 +2,8 @@ import { StyleSheet } from "react-native";
 import React, { useState } from "react"; 
 import { View, Text, Button } from "react-native";
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { TextInput } from 'react-native';
-import { Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { Keyboard, TouchableWithoutFeedback , TextInput ,Alert} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { Alert } from "react-native";
-import { auth } from '../../firebase/FirebaseConfig';
-import { signInWithEmailAndPassword } from 'firebase/auth';
 import axios from 'axios';
 import { useUser } from '../../context/UserContext';
  
@@ -61,40 +57,37 @@ export default function LogInScreen({ navigation }) {
           <Button
             title="Log In"
             color="#FF6347"
-            onPress={async () => {
-              if (Email === '' || Password === '') {
-                Alert.alert('Missing Fields', 'Please fill in all fields!');
-                return;
-              }
-              try {
-                const userCredential = await signInWithEmailAndPassword(auth, Email, Password);
-                const user = userCredential.user;
+             onPress={async () => {
+      if (Email === '' || Password === '') {
+        Alert.alert('Missing Fields', 'Please fill in all fields!');
+        return;
+      }
+      try {
+         
+        const response = await axios.post('http://192.168.1.83:3000/api/v1/auth/login', {
+          email: Email,
+          password: Password,
+        });
+        const { user, token } = response.data;
+        setUserData(user);
 
-                if (user.emailVerified = true) {
-                   
-                  const response = await axios.get(`http://192.168.142.95:3000/api/users/${user.uid}`);
-                  const userData = response.data;
-
-                  console.log("User from server:", userData);
-                  setUserData(userData);
-
-                  Alert.alert('Success', 'Login Successful!');
-                  navigation.navigate('Main', {
-                    screen: 'MainTabs',
-                    params: {
-                      screen: 'Home'
-                    },
-                  })
-                }
-                else {
-                  Alert.alert('Verify Email', 'Please verify your email before logging in. Check your inbox.');
-                }
-              } catch (error) {
-                Alert.alert('Login failed', error.message);
-              }
-            }}
-          />
-        </View>
+        //if (user.emailVerified === true) {
+          Alert.alert('Success', 'Login Successful!');
+          navigation.navigate('Main', {
+            screen: 'MainTabs',
+            params: {
+              screen: 'Home',
+            },
+          });
+        //} else {
+         // Alert.alert('Verify Email', 'Please verify your email before logging in. Check your inbox.');
+       /// }
+      } catch (error) {
+        Alert.alert('Login failed', error.response?.data?.message || error.message);
+      }
+    }}
+  />
+</View>
       </View>
     </TouchableWithoutFeedback>
   );
