@@ -42,8 +42,6 @@ export default function ForgotPasswordScreen({ navigation })  {
         <Button
          title="Send Password Reset Email"
          color="#FF6347"
-         marginTop={25}S
-         style={styles.button}
          onPress={() => {
             if (email === "") {
               Alert.alert("Validation Error", "Please fill in all fields!");

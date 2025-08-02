@@ -152,7 +152,7 @@ const ProfileScreen = ( ) => {
             data={userPosts}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => (
-              <TouchableOpacity  onPress={() => navigation.navigate('PostScreen', { postId: item.postId })}>
+             <TouchableOpacity onPress={() => navigation.navigate('PostScreen', { post: item } )}>
             <PostCard
                   
                   style={styles.postCard}

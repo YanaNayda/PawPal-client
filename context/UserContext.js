@@ -5,7 +5,11 @@ const UserContext = createContext(null);
 
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
-
+  // Debug: log whenever userData changes
+  React.useEffect(() => {
+    console.log('UserContext: userData updated:', userData);
+  }, [userData]);
+  
   return (
     <UserContext.Provider value={{ userData, setUserData }}>
       {children}

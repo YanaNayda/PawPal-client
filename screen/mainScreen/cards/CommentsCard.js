@@ -4,12 +4,10 @@ import {ImageBackground, TouchableOpacity , Button,TextInput} from 'react-native
  
 
 export default function  CommentsCard({ comment, style}) {
-    post.likes = post.likes || 0;
+ 
     return (
         <View style ={styles.commentsCard}>
-             
             <View style={styles.Row}>
-          
                 <Text style={styles.authorName}>{comment.author?.displayName || 'No name'}</Text>
             </View>
              <Text style={styles.commentText}>{comment.content}</Text>
@@ -24,8 +22,8 @@ commentsCard: {
   backgroundColor: 'white',
   borderRadius: 12,
   padding: 10,
-  marginBottom: 15,
-  width: '100%',
+  margin:10 ,
+ 
   shadowColor: '#000',
   shadowOffset: { width: 0, height: 3 },
   shadowOpacity: 0.3,

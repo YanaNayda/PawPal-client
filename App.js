@@ -17,9 +17,12 @@ import SettingsScreen from './screen/additionalScreen/SettingsScreen';
 import SavedScreen from './screen/additionalScreen/SavedScreen';
 import PostScreen from './screen/mainScreen/PostScreen';
 import ProductScreen from './screen/mainScreen/Marketplace/ProductScreen';
+import ChatScreen from './screen/additionalScreen/ChatScreen';
+import MessagesChatScreen from './screen/additionalScreen/MessagesChatScreen';
+import CreateChatScreen from './screen/additionalScreen/CreateChatScreen';
+import AddParticipantsScreen from './screen/additionalScreen/AddParticipantsScreen';
 import { TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
-import ChatScreen from './screen/additionalScreen/ChatScreen';
 import { useNavigation } from '@react-navigation/native';
 import 'react-native-gesture-handler';
 import CustomDrawerContent from './navigation/CustomDrawerContent';
@@ -30,7 +33,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CreatePost from './screen/mainScreen/CreatePost';
 import { Provider as PaperProvider } from 'react-native-paper';
 import 'react-native-get-random-values';
-
+import 'react-native-url-polyfill/auto';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -140,6 +143,9 @@ export default function App() {
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
           <Stack.Screen name="Main" component={DrawerNavigation}  />
           <Stack.Screen name="Chat" component={ChatScreen} options={{ headerShown: true, title: 'Chat' }} />
+          <Stack.Screen name="MessagesChat" component={MessagesChatScreen} options={{ headerShown: true, title: 'Messages' }} />
+          <Stack.Screen name="CreateChat" component={CreateChatScreen} options={{ headerShown: true, title: 'Create Chat' }} />
+          <Stack.Screen name="AddParticipants" component={AddParticipantsScreen} options={{ headerShown: true, title: 'Add Participants' }} />
           <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerShown: true, title: 'Edit Profile' }} />
           <Stack.Screen name="CreatePost" component={CreatePost} options={{ headerShown: true, title: 'Create Post' }} />
           <Stack.Screen name="Saved" component={SavedScreen} options={{ headerShown: true, title: 'Saved' }} />
