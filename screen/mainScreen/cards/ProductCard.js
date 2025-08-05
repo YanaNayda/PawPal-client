@@ -24,17 +24,17 @@ export default function ProductCard({product}) {
             
             
             <Text style ={styles.productTextTitle}>{product.title}</Text>
-            <Text style ={styles.productTextCategories}>{product.category}</Text>
+            <Text style ={styles.productTextCategories}> Category: {product.category}</Text>
             <View style={styles.Row}> 
                <Icon name="location-pin" size={16} color="#FF6347S" style={{ marginRight: 3 }}/>
-             <Text style ={styles.productText}>Location: {product.location}</Text>
+             <Text style ={styles.productText}> Location: {product.location}</Text>
            </View>
 
             <View style={styles.Row}>
             <Text style={styles.productDate}>
             {new Date(product.createdAt).toLocaleDateString()}
            </Text>
-            <Text style ={styles.productText}>  {product.price} ₪</Text>
+            <Text style ={styles.productText}> Price: {product.price} ₪</Text>
            </View>
         </View>
     )

@@ -25,28 +25,34 @@ const EditProfile = ({navigation }) => {
     }
   }, [userData]);
 
-  const pickImage = async () => {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (permissionResult.granted === false) {
-        alert("Permission to access camera roll is required!");
-        return;
-      }
-  
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
    
-      if (!result.canceled) {
-        setAvatar(result.assets[0].uri);
-      }
-    };
+      const pickImage = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+          alert("Permission to access camera roll is required!");
+          return;
+        }
+    
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          allowsEditing: true,
+          aspect: [1, 1],
+          quality: 1,
+        });
+     
+        if (!result.canceled) {
+          setAvatar(result.assets[0].uri);
+        }
+          await axios.put(`http://192.168.1.83:3000/api/v1/users/${userData.uid}`, {
+         photoURL: result.assets[0].uri,
+            
+        });
+    
+      }; 
 
   return (
     <ImageBackground
-      source={require('../../assets/background_paw_pal.png')}
+      source={require('../../assets/back_add2png.png')}
       style={styles.background}
       resizeMode="cover">
 
@@ -65,7 +71,7 @@ const EditProfile = ({navigation }) => {
              </TouchableOpacity>
      </View> 
         
-         <View style={{ width: '100%' }}>
+         <View style={{ width: '100%',color: '#ffffff', }}>
             <Text style={styles.questionText}> Your Name* </Text>
         </View>
 
@@ -75,7 +81,7 @@ const EditProfile = ({navigation }) => {
           onChangeText={setUsername}
           placeholder="Enter your name"
         />
-        <View style={{ width: '100%' }}>
+          <View style={{ width: '100%',color: '#ffffff', }}>
             <Text style={styles.questionText}>  What do you want to share?</Text>
         </View>
 
@@ -87,7 +93,7 @@ const EditProfile = ({navigation }) => {
           multiline
         />
 
-        <View style={{ width: '100%' }}>
+       <View style={{ width: '100%',color: '#ffffffff', }}>
             <Text style={styles.questionText}> What is your email?* </Text>
         </View>
 
@@ -99,7 +105,7 @@ const EditProfile = ({navigation }) => {
           keyboardType="email-address"
         />
 
-        <View style={{ width: '100%' }}>
+        <View style={{ width: '100%',color: '#ffffff', }}>
             <Text style={styles.questionText}>Your Phone Number </Text>
         </View>
 

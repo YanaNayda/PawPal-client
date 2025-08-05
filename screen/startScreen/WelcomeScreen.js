@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet ,ImageBackground} from "react-native";
 import React from "react"; 
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -10,7 +10,11 @@ import { View, Text, Button } from 'react-native';
 
 const WelcomeScreen = ({ navigation }) => {
   return (
-
+ <ImageBackground
+        source={require('../../assets/back_add2png.png')}
+        style={styles.background}
+        resizeMode="cover"
+      > 
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to PawPal!</Text>
       <Text style={styles.subtitle}>Your pet's new best friend.</Text>
@@ -24,6 +28,7 @@ const WelcomeScreen = ({ navigation }) => {
         />
       </View>
     </View>
+    </ImageBackground>
   );
 };
 
@@ -34,7 +39,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#004aad',
+    
     padding: 20,
   },
   title: {
@@ -57,5 +62,8 @@ const styles = StyleSheet.create({
     borderRadius: 5,
 
     width: "60%",
+  },
+   background: {
+    flex: 1,
   },
 });

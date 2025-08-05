@@ -11,7 +11,7 @@ import { useNavigation } from '@react-navigation/native';
  import FabGroupMarket from '../components/FABGroupMarket.js';
 import { useIsFocused } from '@react-navigation/native';
 
-import backgroundImage from '../../../assets/background_paw_pal.png';
+import backgroundImage from '../../../assets/back_add.png';
 
 const MarketplaceScreen = () => {
   const isFocused = useIsFocused();
@@ -78,14 +78,14 @@ useFocusEffect(
         keyExtractor={(item) => item._id}
          numColumns={2}
         renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate('Marketplace', { productId: item._id })}
-          style={{ width: '50%', padding: 8 }}> 
+        <TouchableOpacity onPress={() => navigation.navigate('ProductScreen', { product: item })}
+          style={{ width: '50%', padding: 3 }}> 
             <ProductCard product={item} />
         </TouchableOpacity>
           )}
            columnWrapperStyle={{ justifyContent: "space-between" }}
-        contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 10 }}
-        ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20 }}>No products found</Text>}
+        contentContainerStyle={{ paddingHorizontal: 5, paddingVertical: 5 }}
+        ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 5 }}>No products found</Text>}
         style={{ flex: 1 }}
         />
 
@@ -103,10 +103,10 @@ const styles = StyleSheet.create({
 buttonRow: {
   flexDirection: 'row',
   justifyContent: 'space-between',
-  width: '90%',
+  width: '100%',
   backgroundColor: 'transparent',
-  marginTop: 10,
-  gap: 5,  
+  marginTop: 6,
+  gap: 2,  
 },
 button: {
   flex: 1,
@@ -114,7 +114,7 @@ button: {
   flexDirection: 'row',
   paddingHorizontal: 20,
   gravity: 'center',
-  paddingVertical: 12,
+  paddingVertical: 15,
   borderRadius: 10,
   alignItems: 'center',
   shadowColor: '#000',
@@ -137,8 +137,8 @@ buttonRow: {
   flexDirection: 'row',
   justifyContent: 'space-between',
   width: '90%',
-  marginTop: 10,
-  gap: 5,  
+  marginTop: 4,
+  gap: 4,  
 },
   buttonIcon: {
     width: 24,
@@ -158,9 +158,9 @@ buttonRow: {
      width: '90%',
      height: 50,
     marginBottom: 10,
-    marginTop: 10,
+    marginTop: 5,
     backgroundColor: 'transparent',
     marginHorizontal: 10,
-    marginVertical: 10,
+    marginVertical: 5,
   },
 });

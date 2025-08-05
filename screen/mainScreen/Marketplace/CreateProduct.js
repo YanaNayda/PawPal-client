@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {View,Text,StyleSheet,Pressable,ImageBackground,Image,TouchableOpacity,Button,TextInput,ScrollView,Platform,KeyboardAvoidingView,Keyboard,Alert,} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import backgroundImage from '../../../assets/background_paw_pal.png';
+import backgroundImage from '../../../assets/white_back.png';
 import { useUser } from '../../../context/UserContext.js';
 import axios from 'axios';
 import uuid from 'react-native-uuid';
@@ -64,18 +64,35 @@ const CreateProduct = ({ navigation }) => {
     }
   };
 
+  const showAlertSave = () =>
+    Alert.alert(
+     'Do you want to save this product?',   
+      'You cannot change it later.',   
+      [
+         {
+          text: 'Yes, I want to save!',
+          onPress: () =>  handleSubmit(),
+        },
+        {
+          text: 'No !',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+      ],
+      {
+        cancelable: true,
+        onDismiss: () =>
+          Alert.alert(
+            'This alert was dismissed by tapping outside of the alert dialog.',
+          ),
+      },
+    );
+
   const deletePhoto = () => setPhoto(null);
 
   const handleSubmit = async () => {
-    if (!description || !location || !price || !category  || !title) {
-      Alert.alert('Error', 'Please fill in all required fields');
-      return;
-    }
-
     try {
       await axios.post('http://192.168.1.83:3000/api/v1/market/create-product-post', {
-         
-    
         productId: uuid.v4(),
         seller: userData?.uid,
         description: description,
@@ -130,10 +147,7 @@ return (
             />
             <Text style={styles.username}>{userData?.displayName || 'User Name'}</Text>
           </View>
-
         <View style={styles.container}>
-
-
        <View style={styles.containerRow}> 
   
   <View style={styles.leftColumn}> 
@@ -167,9 +181,8 @@ return (
     </View>
   </View>
 
-  {/* Правая часть — поле ввода локации */}
-  <View style={styles.rightColumn}>
 
+  <View style={styles.rightColumn}>
      <TextInput
         style={[styles.input, {   }]}
               placeholder="Title of your product"
@@ -265,7 +278,14 @@ return (
               <Button
                 color="#d9534f"
                 title="Submit Product"
-                onPress={() => handleSubmit()}
+                onPress={() => {
+                    if (!description || !location || !price || !category || !title) {
+                   Alert.alert('Error', 'Please fill in all required fields');
+                    return;
+                    } else {
+                  showAlertSave();
+                    }
+                 }}
               />
              </View>
              

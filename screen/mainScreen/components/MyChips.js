@@ -10,16 +10,17 @@ import { View, ScrollView, StyleSheet } from 'react-native';
 
    const toggleTag = (tag) => {
     if (choseTags.includes(tag)) {
-      // Удаляем из выбранных
+       
       setChoseTags(choseTags.filter(t => t !== tag));
     } else {
-      // Добавляем в выбранные
+      
       setChoseTags([...choseTags, tag]);
     }
   };
 
  
   return (
+    
     <View style={styles.container}>
          <Chip icon={() => (
               <Image

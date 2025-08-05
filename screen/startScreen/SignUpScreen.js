@@ -1,4 +1,4 @@
-import { Alert, StyleSheet } from "react-native";
+import { Alert, StyleSheet,ImageBackground } from "react-native";
 import React, { useState } from "react"; 
 import { View, Text, Button } from "react-native";
 import {NavigationContainer} from '@react-navigation/native';
@@ -24,6 +24,11 @@ const SignUpScreen = ({navigation}) => {
      
 
     return (
+        <ImageBackground
+                  source={require('../../assets/back_start_screen.png')}
+                  style={styles.background}
+                  resizeMode="cover"
+                > 
       <KeyboardAvoidingView
        style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}>  
@@ -124,6 +129,7 @@ const SignUpScreen = ({navigation}) => {
       </View>
       </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
+      </ImageBackground>
       );
     };
 
@@ -135,7 +141,7 @@ const SignUpScreen = ({navigation}) => {
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#004aad",
+      
         padding: 20,
       },
       title: {
@@ -145,6 +151,9 @@ const SignUpScreen = ({navigation}) => {
         color: "#ffffff",
         textAlign: "center",
       },
+         background: {
+        flex: 1,
+        },
       subtitle: {
         fontSize: 18,
         color: "#ffffff",

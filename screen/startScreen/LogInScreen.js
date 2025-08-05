@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet ,ImageBackground} from "react-native";
 import React, { useState } from "react"; 
 import { View, Text, Button } from "react-native";
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -14,6 +14,11 @@ export default function LogInScreen({ navigation }) {
   const { setUserData } = useUser();
 
   return (
+     <ImageBackground
+            source={require('../../assets/back_start_screen.png')}
+            style={styles.background}
+            resizeMode="cover"
+          > 
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>               
         <Text style={styles.title}>Login</Text>
@@ -90,6 +95,7 @@ export default function LogInScreen({ navigation }) {
 </View>
       </View>
     </TouchableWithoutFeedback>
+    </ImageBackground>
   );
 }
 
@@ -101,8 +107,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#004aad",
+     
     padding: 20,
+    
+  },
+     background: {
+    flex: 1,
   },
   title: {
     fontSize: 32,
