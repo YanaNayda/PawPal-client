@@ -129,8 +129,7 @@ function HeaderChatButton() {
   
 
 export default function App() {
-  //mongodb+srv://naydenovayn:naydenovayn@cluster0.xc4mv5w.mongodb.net/
-  //mongodb+srv://naydenovayn:<naydenovayn>@cluster0.zqsvtnb.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+ 
     return (
     <GestureHandlerRootView> 
       <PaperProvider> 
